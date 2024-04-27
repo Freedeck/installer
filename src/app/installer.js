@@ -1,5 +1,14 @@
-await fdi.checkGitExists().then((gitExists) => {
+await fdi.checkGitExists().then(async (gitExists) => {
 	if(!gitExists) {
-		window.location.href = 'install-git.html';
+		await fdi.askToInstallGit(() => {
+			console.log('Git installed');
+			setup();
+		});
+	} else {
+		setup();
 	}
 });
+
+const setup = () => {
+	
+}
