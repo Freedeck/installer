@@ -46,13 +46,14 @@ const createWin = () => {
 	ipcMain.handle('install', (ev, pathe, desktop) => {
 		pathe = path.resolve(pathe);
 		console.log('Installing to', pathe, 'with desktop', desktop);
+		ev.sender.send('notify', 'Got path of ' + pathe);
 		if(!fs.existsSync(pathe)) {
 			fs.mkdirSync(pathe);
+			ev.sender.send('notify', 'Created' + pathe);
 		}
 		exec('cd ' + pathe + ' && git clone https://github.com/freedeck/freedeck/',() => {
+			ev.sender.send('notify', 'Cloned repository');
 			console.log('Cloned');
-			console.log('Launching final setup')
-			console.log('Installation completed with code');
 			const shortcutsCreated = createDesktopShortcut({
 				windows: { 
 					name: 'Freedeck',
@@ -61,13 +62,15 @@ const createWin = () => {
 					arguments: path.resolve(pathe+"/freedeck")
 				}
 			});
-			  
-			  if (shortcutsCreated) {
+			
+			if (shortcutsCreated) {
 				console.log('Everything worked correctly!');
-			  } else {
+			} else {
 				console.log('Could not create the icon or set its permissions (in Linux if "chmod" is set to true, or not set)');
-			  }
-			  exec('cd ' + pathe + '/freedeck && npm i', () => {
+			}
+			ev.sender.send('notify', 'Created shortcut');
+			exec('cd ' + pathe + '/freedeck && npm i', () => {
+				  ev.sender.send('notify', 'Installed NPM packages, install complete.');
 				console.log('Installed npm packages for freedeck');
 				ev.sender.send('installation-completed');
 			});

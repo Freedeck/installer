@@ -17,6 +17,11 @@ contextBridge.exposeInMainWorld('fdi', {
 	install: async (path, desktop) => {
 		return await ipcRenderer.invoke('install', path, desktop);
 	},
+	onUpdate: async (cb) => {
+		ipcRenderer.on('notify', (ev, c) => {
+			cb(c);
+		})
+	},
 	postInstall: async (cb) => {
 		ipcRenderer.on('installation-completed', (ev) => {
 			cb();

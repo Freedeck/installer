@@ -1,4 +1,7 @@
 const setup = () => {
+	fdi.onUpdate((data) => {
+		document.querySelector('#meta').innerText += data+"\n";
+	})
 	document.getElementById('instbtn').onclick = (ev) => {
 		const dialogBox = document.querySelector('.dialog');
 		dialogBox.style.display = 'block';
