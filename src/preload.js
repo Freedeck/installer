@@ -11,7 +11,15 @@ contextBridge.exposeInMainWorld('fdi', {
 		});
 		return true;
 	},
+	getUserHomeDir: async () => {
+		return require('os').homedir();
+	},
 	install: async (path, desktop) => {
 		return await ipcRenderer.invoke('install', path, desktop);
+	},
+	postInstall: async (cb) => {
+		ipcRenderer.on('installation-completed', (ev) => {
+			cb();
+		});
 	}
 })

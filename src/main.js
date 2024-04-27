@@ -1,7 +1,9 @@
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const { BrowserWindow, app, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
+
+const createDesktopShortcut = require('create-desktop-shortcuts');
 
 const createWin = () => {
 	const win = new BrowserWindow({
@@ -41,18 +43,33 @@ const createWin = () => {
 		})
 	})
 
-	ipcMain.handle('install', (ev, path, desktop) => {
-		console.log('Installing to', path, 'with desktop', desktop);
-		const gitClone = spawn('git', ['clone', 'https://github.com/freedeck/freedeck/'], {
-			cwd: path
-		});
-		gitClone.on('exit', (code) => {
-			const spawnedInitBat = spawn('cmd', ['/c', 'init.bat'], {
-				cwd: path + '\\freedeck'
+	ipcMain.handle('install', (ev, pathe, desktop) => {
+		pathe = path.resolve(pathe);
+		console.log('Installing to', pathe, 'with desktop', desktop);
+		if(!fs.existsSync(pathe)) {
+			fs.mkdirSync(pathe);
+		}
+		exec('cd ' + pathe + ' && git clone https://github.com/freedeck/freedeck/',() => {
+			console.log('Cloned');
+			console.log('Launching final setup')
+			console.log('Installation completed with code');
+			const shortcutsCreated = createDesktopShortcut({
+				windows: { 
+					name: 'Freedeck',
+					icon: path.resolve(pathe + '/freedeck/assets/logo_big.ico'),
+					filePath: path.resolve(pathe + '/freedeck/init.bat'),
+					arguments: path.resolve(pathe+"/freedeck")
+				}
 			});
-			spawnedInitBat.on('exit', (code) => {
-				console.log('Installation completed with code', code);
-				ev.sender.send('installed', code);
+			  
+			  if (shortcutsCreated) {
+				console.log('Everything worked correctly!');
+			  } else {
+				console.log('Could not create the icon or set its permissions (in Linux if "chmod" is set to true, or not set)');
+			  }
+			  exec('cd ' + pathe + '/freedeck && npm i', () => {
+				console.log('Installed npm packages for freedeck');
+				ev.sender.send('installation-completed');
 			});
 		});
 	});
