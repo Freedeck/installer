@@ -43,6 +43,18 @@ const createWin = () => {
 
 	ipcMain.handle('install', (ev, path, desktop) => {
 		console.log('Installing to', path, 'with desktop', desktop);
+		const gitClone = spawn('git', ['clone', 'https://github.com/freedeck/freedeck/'], {
+			cwd: path
+		});
+		gitClone.on('exit', (code) => {
+			const spawnedInitBat = spawn('cmd', ['/c', 'init.bat'], {
+				cwd: path + '\\freedeck'
+			});
+			spawnedInitBat.on('exit', (code) => {
+				console.log('Installation completed with code', code);
+				ev.sender.send('installed', code);
+			});
+		});
 	});
 }
 
