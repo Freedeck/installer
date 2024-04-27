@@ -11,6 +11,10 @@ h1 {
 	text-align: center;
 }
 
+.center {
+	text-align: center;
+}
+
 @font-face {
 	font-family: 'Rethink Sans';
 	src: url('./RethinkSans-Regular.ttf');

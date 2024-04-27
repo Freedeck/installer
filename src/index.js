@@ -5,8 +5,8 @@ const path = require('path');
 
 const createWin = () => {
 	const win = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 700,
+		height: 550,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: true,
@@ -40,6 +40,10 @@ const createWin = () => {
 			});
 		})
 	})
+
+	ipcMain.handle('install', (ev, path, desktop) => {
+		console.log('Installing to', path, 'with desktop', desktop);
+	});
 }
 
 const download = (flink, to) => {

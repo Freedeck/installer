@@ -11,4 +11,7 @@ contextBridge.exposeInMainWorld('fdi', {
 		});
 		return true;
 	},
+	install: async (path, desktop) => {
+		return await ipcRenderer.invoke('install', path, desktop);
+	}
 })

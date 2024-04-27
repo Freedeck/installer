@@ -7,7 +7,15 @@
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<h1>Freedeck</h1>
+	<h1>Freedeck Installer</h1>
+	<div class="center">
+		<p id="meta">You're one click away from installing the FOSS alternative to the Elgato Stream Deck.</p>
+		<label for="instp">Installation Path</label><input id="instp" type="text" name="instp" value="C:\Program Files\Freedeck">
+		<br/>
+		<label for="instds">Add Desktop Shortcut</label><input id="instds" type="checkbox" name="instds" checked>
+		<br/>
+		<button id="instbtn">Install!</button>
+	</div>
 	<script src="installer.js" type="module"></script>
 </body>
 </html>
